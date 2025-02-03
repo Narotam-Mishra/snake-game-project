@@ -47,6 +47,12 @@ document.addEventListener("DOMContentLoaded", () => {
         gameArena.innerHTML = '';
 
         // wipe out everything and redraw with new coordinates when snake moves
+        
+        sanke.forEach((snakeCell) => {
+            const element = drawDiv(snakeCell.x, snakeCell.y, 'snake');
+            gameArena.appendChild(element);
+        })
+
         const foodElement = drawDiv(food.x, food.y, 'food');
         gameArena.appendChild(foodElement);
     }
