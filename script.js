@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     // structure of snake
-    let sanke = [{x:160, y:200}, {x:140, y:200}, {x:120, y:200}];
+    let snake = [{x:160, y:200}, {x:140, y:200}, {x:120, y:200}];
     
     // displacement on x-axis
     let dx = cellSize;
@@ -48,7 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // wipe out everything and redraw with new coordinates when snake moves
         
-        sanke.forEach((snakeCell) => {
+        snake.forEach((snakeCell) => {
             const element = drawDiv(snakeCell.x, snakeCell.y, 'snake');
             gameArena.appendChild(element);
         })
@@ -57,9 +57,47 @@ document.addEventListener("DOMContentLoaded", () => {
         gameArena.appendChild(foodElement);
     }
 
+    // utility method to move food item
+    function moveFood(){
+        let newX, newY;
+        do{
+            // randomly select position for food item
+            newX = Math.floor(Math.random() * ((arenaSize - cellSize) / cellSize) * cellSize);
+            newY = Math.floor(Math.random() * ((arenaSize - cellSize) / cellSize) * cellSize);
+        }while(snake.some(snakeCell => snakeCell.x === newX && snakeCell.y === newY));
+
+        // update new position of food
+        food = {x: newX, y: newY};
+    }
+
+    // utility method to update snake appearance
+    function updateSnake(){
+        // step 1 - calculate new co-ordinate where snake's head will go to
+        const newHead = {x: snake[0].x + dx, y: snake[0].y + dy};
+        
+        // add new head to snake's current head
+        snake.unshift(newHead);
+
+        // if new head of snake collide with food, then food is completed
+        if(newHead.x === food.x && newHead.y === food.y){
+            // there will be collison between snake & food
+            score += 5;
+
+            // don't pop the the snake's tail
+            // move the food
+            moveFood();
+        }else{
+            // remove the last cell
+            snake.pop();
+        }  
+    }
+
     // utility method to continue the game on loop
     function gameLoop(){
         setInterval(() => {
+            // update snake on UI
+            updateSnake();
+
             // draw score board
             drawScoreBorad();
 
