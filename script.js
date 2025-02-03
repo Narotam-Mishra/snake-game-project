@@ -26,8 +26,50 @@ document.addEventListener("DOMContentLoaded", () => {
     // displacement on y-axis
     let dy = 0;
 
-    // utility method to start the game
-    function startGame(){
+    // utility method to draw scoreboard of game
+    function drawScoreBorad(){
+        const scoreBoard = document.getElementById('score-board');
+        scoreBoard.textContent = `Score: ${score}`;
+    }
+
+    // utility method to draw div for snake
+    function drawDiv(x, y, className){
+        const div = document.createElement('div');
+        div.classList.add(className);
+        div.style.top = `${y}px`;
+        div.style.left = `${x}px`;
+        return div;
+    }
+
+    // utility method to draw food and snake
+    function drawFoodAndSnake(){
+        // if previously something is drawn then reove it
+        gameArena.innerHTML = '';
+
+        // wipe out everything and redraw with new coordinates when snake moves
+        const foodElement = drawDiv(food.x, food.y, 'food');
+        gameArena.appendChild(foodElement);
+    }
+
+    // utility method to continue the game on loop
+    function gameLoop(){
+        setInterval(() => {
+            // draw score board
+            drawScoreBorad();
+
+            // draw snake and food item
+            drawFoodAndSnake();
+        }, 1000);
+    }
+
+    // utility method to run the game
+    function runGame(){
+        gameStarted = true;
+        gameLoop();
+    }
+
+    // utility method to intialize the game setup
+    function initiateGame(){
         const scoreBoard = document.createElement('div');
         scoreBoard.id = 'score-board';
         // scoreBoard.textContent = '10';
@@ -37,7 +79,13 @@ document.addEventListener("DOMContentLoaded", () => {
         startButton.textContent = 'Start Game';
         startButton.classList.add('start-button');
         document.body.appendChild(startButton);
+
+        startButton.addEventListener('click', () => {
+            startButton.style.display = 'none';
+            runGame();
+        })
     }
 
-    startGame();
+    // this is the first function to be executed so that we prepare the UI
+    initiateGame();
 })
