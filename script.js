@@ -62,8 +62,8 @@ document.addEventListener("DOMContentLoaded", () => {
         let newX, newY;
         do{
             // randomly select position for food item
-            newX = Math.floor(Math.random() * ((arenaSize - cellSize) / cellSize) * cellSize);
-            newY = Math.floor(Math.random() * ((arenaSize - cellSize) / cellSize) * cellSize);
+            newX = Math.floor(Math.random() * ((arenaSize - cellSize) / cellSize)) * cellSize;
+            newY = Math.floor(Math.random() * ((arenaSize - cellSize) / cellSize)) * cellSize;
         }while(snake.some(snakeCell => snakeCell.x === newX && snakeCell.y === newY));
 
         // update new position of food
@@ -92,24 +92,29 @@ document.addEventListener("DOMContentLoaded", () => {
         }  
     }
 
-    function isGameOver(){
-        // case 1 - if head of the snake hits itself then it also case of collision
-        // check snake body hit
-        for(let i=1; i<snake.length; i++){
-            if(snake[0].x === snake[i].x && snake[0].y === snake[i].y){
-                return true;
-            }
+    function isGameOver() {
+      // case 1 - if head of the snake hits itself then it also case of collision
+      // check snake body hit
+      for (let i = 1; i < snake.length; i++) {
+        if (snake[0].x === snake[i].x && snake[0].y === snake[i].y) {
+          return true;
+        }
+      }
 
-            // case 2 - if snake hit top wall, bottom wall, left or right wall
-            // then it is Game over case
-            // check wall collision case
-            const isHittingLeftWall = snake[0].x < 0;
-            const isHittingTopWall = snake[0].y < 0;
-            const isHittingRightWall = snake[0].x >= arenaSize;
-            const isHittingDownWall = snake[0].y >= arenaSize;
+      // case 2 - if snake hit top wall, bottom wall, left or right wall
+      // then it is Game over case
+      // check wall collision case
+      const isHittingLeftWall = snake[0].x < 0;
+      const isHittingTopWall = snake[0].y < 0;
+      const isHittingRightWall = snake[0].x >= arenaSize;
+      const isHittingDownWall = snake[0].y >= arenaSize;
 
-            return isHittingDownWall || isHittingLeftWall || isHittingRightWall || isHittingTopWall;
-        }    
+      return (
+        isHittingDownWall ||
+        isHittingLeftWall ||
+        isHittingRightWall ||
+        isHittingTopWall
+      );
     }
 
     // utility method to continue the game on loop
@@ -131,13 +136,53 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // draw snake and food item
             drawFoodAndSnake();
-        }, 500);
+        }, 200);
+    }
+
+    // utility method to change snake's direction
+    function changeSnakeDirection(event){
+        // console.log("KeyCode:", event.keyCode);
+        
+        const LEFT_KEY = 37;
+        const RIGHT_KEY = 39;
+        const UP_KEY = 38;
+        const DOWN_KEY = 40;
+
+        const isGoingUp = dy === -cellSize;
+        const isGoingDown = dy === cellSize;
+
+        const isGoingLeft = dx === -cellSize;
+        const isGoingRight = dx === cellSize;
+
+        const keyPressed = event.keyCode;
+        if(keyPressed === LEFT_KEY && !isGoingRight){
+            dy = 0;
+            dx = -cellSize;
+        }
+
+        if(keyPressed === RIGHT_KEY && !isGoingLeft){
+            dy = 0;
+            dx = cellSize;
+        }
+
+        if(keyPressed === UP_KEY && !isGoingDown){
+            dy = -cellSize;
+            dx = 0;
+        }
+
+        if(keyPressed === DOWN_KEY && !isGoingUp){
+            dy = cellSize;
+            dx = 0;
+        }
     }
 
     // utility method to run the game
     function runGame(){
-        gameStarted = true;
-        gameLoop();
+        if(!gameStarted){
+            gameStarted = true;
+            gameLoop();
+            document.addEventListener('keydown', changeSnakeDirection);
+        }
     }
 
     // utility method to intialize the game setup
