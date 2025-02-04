@@ -92,9 +92,37 @@ document.addEventListener("DOMContentLoaded", () => {
         }  
     }
 
+    function isGameOver(){
+        // case 1 - if head of the snake hits itself then it also case of collision
+        // check snake body hit
+        for(let i=1; i<snake.length; i++){
+            if(snake[0].x === snake[i].x && snake[0].y === snake[i].y){
+                return true;
+            }
+
+            // case 2 - if snake hit top wall, bottom wall, left or right wall
+            // then it is Game over case
+            // check wall collision case
+            const isHittingLeftWall = snake[0].x < 0;
+            const isHittingTopWall = snake[0].y < 0;
+            const isHittingRightWall = snake[0].x >= arenaSize;
+            const isHittingDownWall = snake[0].y >= arenaSize;
+
+            return isHittingDownWall || isHittingLeftWall || isHittingRightWall || isHittingTopWall;
+        }    
+    }
+
     // utility method to continue the game on loop
     function gameLoop(){
         setInterval(() => {
+            if(!gameStarted) return;
+            // check for game over case
+            if(isGameOver()){
+                gameStarted = false;
+                alert(`Game Over, Score = ${score}`);
+                window.location.reload();
+                return;
+            }
             // update snake on UI
             updateSnake();
 
@@ -103,7 +131,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // draw snake and food item
             drawFoodAndSnake();
-        }, 1000);
+        }, 500);
     }
 
     // utility method to run the game
