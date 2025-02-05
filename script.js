@@ -26,6 +26,12 @@ document.addEventListener("DOMContentLoaded", () => {
     // displacement on y-axis
     let dy = 0;
 
+    // variable to maintain snake speed with time
+    let gameSpeed = 200;
+    
+    // top keep track of setInterval() method id
+    let intervalId
+
     // utility method to draw scoreboard of game
     function drawScoreBorad(){
         const scoreBoard = document.getElementById('score-board');
@@ -81,8 +87,19 @@ document.addEventListener("DOMContentLoaded", () => {
         // if new head of snake collide with food, then food is completed
         if(newHead.x === food.x && newHead.y === food.y){
             // there will be collison between snake & food
+            console.log("Collided");
             score += 5;
 
+            if(gameSpeed > 30){
+                // clear interval
+                clearInterval(intervalId);
+
+                // update game's speed
+                gameSpeed -= 10;
+
+                // run game loop again
+                gameLoop();
+            }
             // don't pop the the snake's tail
             // move the food
             moveFood();
@@ -119,7 +136,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // utility method to continue the game on loop
     function gameLoop(){
-        setInterval(() => {
+        intervalId = setInterval(() => {
             if(!gameStarted) return;
             // check for game over case
             if(isGameOver()){
@@ -136,7 +153,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // draw snake and food item
             drawFoodAndSnake();
-        }, 200);
+        }, gameSpeed);
     }
 
     // utility method to change snake's direction
